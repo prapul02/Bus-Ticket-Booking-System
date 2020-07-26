@@ -1,0 +1,77 @@
+<div class="container">
+  <h1>Select Tickets</h1>
+  <form id="ticket-form" action="{{action}}" method="{{method}}" _method="{{method}}">
+    <input type="hidden" name="busId" value="1" />
+
+    <label>Please select available seats:</label>
+    <br />
+    <input type="checkbox" id="seat1" value=true name="seat1" {{#if (ifEquality bus.seat1 true)}}checked{{/if}} />
+    <label for="seat1">1A</label>
+    </br>
+    <input type="checkbox" id="seat2" value=true name="seat2" {{#if (ifEquality bus.seat2 true)}}checked{{/if}} />
+    <label for="seat2">1B</label>
+    <br />
+    <input type="checkbox" id="seat2" value=true name="seat3" {{#if (ifEquality bus.seat3 true)}}checked{{/if}} />
+    <label for="seat3">1C</label>
+    <br />
+    <input type="checkbox" id="seat2" value=true name="seat4" {{#if (ifEquality bus.seat4 true)}}checked{{/if}} />
+    <label for="seat4">1D</label>
+    <br />
+    <input type="checkbox" id="seat2" value=true name="seat5" {{#if (ifEquality bus.seat5 true)}}checked{{/if}} />
+    <label for="seat5">1E</label>
+    <br />
+    <input class="btn btn-primary" type="submit" value="Book Ticket" />
+  </form>
+</div>
+<script>
+  const $addTicket = document.querySelector("#ticket-form");
+  console.log($addTicket)
+  $addTicket.addEventListener("submit", event => {
+    event.preventDefault();
+
+    const submitUrl = $addTicket.action;
+    console.log(submitUrl);
+    const submitMethod = $addTicket.getAttribute("_method");
+    const formData = new FormData($addTicket);
+    let ticketDetail = {};
+    for (const fields of formData.entries()) {
+      const [key, value] = fields;
+      ticketDetail[key] = value;
+    }
+    console.log(ticketDetail);
+
+    const config = {
+      method: submitMethod.toUpperCase(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(ticketDetail)
+
+    }
+
+    fetch(submitUrl, config)
+      .then(response => {
+        if (response.status === 200) {
+          return response.json()
+        } else {
+          throw (new Error(response.status))
+        }
+      })
+      .then(data => {
+        alert(data.message);
+        window.location.href = "/bus"
+      })
+      .catch(error => {
+        switch (error.message) {
+          case "400":
+            alert("Please check form values...");
+            break;
+          case "500":
+            alert("Please Try after some time...");
+            break;
+          default:
+            console.error(error);
+        }
+      })
+  });
+</script>

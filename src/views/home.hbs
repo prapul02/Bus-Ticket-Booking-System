@@ -1,0 +1,72 @@
+<div class="container">
+  <h1 class="display-4">Welcome to Blue Bus Booking</h1>
+  <form class="form-signin">
+    <img class="mb-4" src="/docs/4.5/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">Please sign up</h1>
+    <label for="inputEmail" class="sr-only">Email address</label>
+    <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required=""
+      autofocus="" /required> <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password"
+      required="" /required> <div class="checkbox mb-3">
+    <label>
+      <input type="checkbox" value="valid-details"> Accept Terms and Conditions
+    </label>
+</div>
+<button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
+<p class="mt-5 mb-3 text-muted">© 2020-2021</p>
+</form>
+<h1 class="h3 mb-3 font-weight-normal">Or Proceed to Book</h1>
+<a href="/bus" class="btn btn-primary btn-lg">Available Buses</a>
+
+</div>
+
+<script>
+  const $addSignUpForm = document.querySelector(".form-signin");
+
+  $addSignUpForm.addEventListener("submit", event => {
+    event.preventDefault();
+    console.log($addSignUpForm)
+
+
+    const formData = new FormData($addSignUpForm);
+    let signUpDetail = {};
+    for (const fields of formData.entries()) {
+      const [key, value] = fields;
+      signUpDetail[key] = value;
+    }
+
+    const config = {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(signUpDetail)
+    }
+    console.log(config);
+
+    fetch("/api/bus/sign-up", config)
+      .then(response => {
+        if (response.status === 200) {
+          return response.json()
+        } else {
+          throw (new Error(response.status))
+        }
+      })
+      .then(data => {
+        alert(data.message);
+        window.location.href = "/"
+      })
+      .catch(error => {
+        switch (error.message) {
+          case "400":
+            alert("Please check form values...");
+            break;
+          case "500":
+            alert("Please Enter Unique Details...");
+            break;
+          default:
+            console.error(error);
+        }
+      })
+  });
+</script>
